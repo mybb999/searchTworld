@@ -22,7 +22,7 @@ export default {
   props:[],  
   data(){
     return{
-      header_bannerHei:1
+      header_bannerHei:0
     }
   },
   created(){
