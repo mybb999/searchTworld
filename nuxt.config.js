@@ -1,14 +1,31 @@
 
 export default {
+ //  router: {   
+ //    mode: 'hash',
+ //    base: process.env.NODE_ENV === 'production' ? './' : '/'
+	// },   
   server: {
     port: 3000, // default: 3000
     host: '0.0.0.0' // default: localhost,
+  },
+  axios: {
+    prefix: '/api/',
+    proxy: true
+  },
+  proxy: {
+    '/api/': {
+      target: 'https://127.0.0.1/',
+      pathRewrite: {
+        '^/api/': ''
+      }
+    }
   },
   /*
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
   */
-  mode: 'universal',
+  
+  // mode: 'universal',
   /*
   ** Nuxt target
   ** See https://nuxtjs.org/api/configuration-target
@@ -20,7 +37,7 @@ export default {
   */
   head: {
     // title: process.env.npm_package_name || 'aaa',
-    title:"前列腺调研报告中心网",
+    title: "searchTworld",
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -28,6 +45,11 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [      
+      { src: 'js/myapp.js' },
+      { src: 'js/qrcode.js' },
+      { src: 'js/qrcode.min.js' }
     ]
   },
   /*
@@ -35,15 +57,15 @@ export default {
   */
   css: [
     'element-ui/lib/theme-chalk/index.css',
-    '~/assets/css/app.css'
+    'assets/css/app.css'
   ],
   /*
   ** Plugins to load before mounting the App
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
-    {src:'@/plugins/element-ui'},
-    {src:'@/plugins/vueProto.js',ssr:false},
+    { src: '@/plugins/element-ui' },
+    { src: '@/plugins/vueProto.js', ssr: false },
   ],
   /*
   ** Auto import components
@@ -59,6 +81,7 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/axios'
   ],
   /*
   ** Build configuration
@@ -67,5 +90,5 @@ export default {
   build: {
     transpile: [/^element-ui/],
   },
-  telemetry:false,
+  telemetry: false,
 }

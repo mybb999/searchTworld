@@ -10,8 +10,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.12.2",
     "element-ui": "^2.13.2",
-    "nuxt": "^2.14.0"
+    "nuxt": "^2.14.7",
+    "qs": "^6.9.4"
   },
   "devDependencies": {
     "@vue/test-utils": "^1.0.3",
