@@ -55,10 +55,10 @@ export default {
   methods: {
     // 跳转链接
     toAddress(address) {
-      // window.location.href=address;
-      this.$router.push({
-        path: address,
-      });
+      window.location.href=address;
+      // this.$router.push({
+      //   path: address,
+      // });
     },
     // 获取滚动条高度
     getScrollHeight() {

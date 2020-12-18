@@ -1,272 +1,67 @@
 
 <template>
-  <div id="mypaper">
-    <div class="qrcodeCon" v-show="qrcodeConSwi">
-      <span
-        >原本是扫描跳转到“我的问卷”，由于没有部署到线上，目前暂时跳到百度</span
-      >
-      <div class="qrcode" ref="qrcode"></div>
-    </div>
-
-    <div class="addform">
-      <el-form ref="form" :model="form" label-width="80px">
-        <!-- 循环遍历多选框 -->
-        <el-form-item
-          :label="item.label"
-          v-for="(item, index) in form.arrCheckbox"
-          :key="index"
-        >
-          <div>
-            <el-checkbox-group v-model="item['type'+index]">
-              <el-checkbox
-                :label="itemChe.label"
-                :name="itemChe.name"
-                v-for="(itemChe, indexChe) in item.infoCheckbox"
-                :key="indexChe"
-              ></el-checkbox>
-            </el-checkbox-group>
-            <div class="checkboxSwi">
-              <el-button
-                type="info"
-                size="mini"
-                @click="addArrCheckboxBtn(index)"
-                >该节点后添加多选</el-button
-              >
-              <!-- <el-button type="info" size="mini" @click="addCheckbox(index)"
-                >该节点添加选项</el-button
-              > -->
-              <el-button
-                type="danger"
-                size="mini"
-                @click="delArrCheckbox(index)"
-                >删除</el-button
-              >
-            </div>
+  <div id="addpaper">
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <div class="navBar">
+          <h2>模式选择</h2>
+          <div class="navBarCon">
+            <el-row>
+              <el-col :span="24">
+                <el-menu
+                  default-active="1"
+                  class="el-menu-vertical-demo"
+                  @open="handleOpen"
+                  @close="handleClose"
+                >
+                  <el-menu-item index="1">
+                    <i class="el-icon-document"></i>
+                    <span slot="title">发送二维码和链接</span>
+                  </el-menu-item>
+                </el-menu>
+              </el-col>
+            </el-row>
           </div>
-        </el-form-item>
-
-        <!-- 循环遍历单选框 -->
-        <!-- <el-form-item label="特殊资源">
-          <div>
-            <el-radio-group v-model="form.resource">
-              <el-radio label="线上品牌商赞助"></el-radio>
-              <el-radio label="线下场地免费"></el-radio>
-            </el-radio-group>
-            <div class="radioSwi">
-              <el-button type="info" size="mini" @click="addArrradio(index)"
-                >该节点后添加多选</el-button
-              >
-              <el-button type="info" size="mini" @click="addradio(index)"
-                >该节点添加选项</el-button
-              >
-              <el-button type="danger" size="mini" @click="delArrradio(index)"
-                >删除</el-button
-              >
-            </div>
-          </div>
-        </el-form-item> -->
-        <el-form-item>
-          <!-- <el-button type="primary">添加单选</el-button> -->
-          <el-button
-            type="primary"
-            @click="
-              addArrCheckboxBtn(
-                form.arrCheckbox.length === 0 ? 0 : form.arrCheckbox.length - 1
-              )
-            "
-            >添加多选</el-button
-          >
-          <el-button type="primary" @click="onSubmit">保存问卷</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <!-- 多选框弹出框 -->
-    <el-dialog
-      title="添加多选"
-      :visible.sync="dialogAddCheckbox"
-      width="35%"
-      :show-close="false"
-    >
-      <div class="dialogCheckbox">
-        <el-form
-          ref="dialogCheckbox"
-          :model="dialogCheckbox"
-          label-width="200px"
-          label-position="left"
-        >
-          <el-form-item label="选项名称（可不写）">
-            <el-input v-model="dialogCheckbox.label"></el-input>
-          </el-form-item>
-          <el-form-item
-            label="多选框名称（可不写）"
-            v-for="(item, index) in dialogCheckbox.name"
-            :key="index"
-          >
-            <el-input v-model="dialogCheckbox.name[index]"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="dialogCheckboxSwi">
-        <el-button type="primary" @click="addCheckbox">添加多选框+</el-button>
-        <el-button type="primary" @click="delCheckbox">删减多选框-</el-button>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogAddCheckbox = false">取 消</el-button>
-        <el-button type="primary" @click="dialogCheckbox_submit"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
+        </div>
+      </el-col>
+      <el-col :span="18">
+        <base-mod></base-mod>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
+import baseMod from "@/components/addPaperMod/baseMod.vue";
+
 export default {
-  name: "mypaper",
+  name: "addpaper",
   transition: "bounce",
   props: [],
   data() {
     return {
-      // 二维码设置信息
-      qrcode: "",
-      // 二维码开关
-      qrcodeConSwi: false,
-      // 当前多选框所需要添加节点的序号
-      checkboxItemIndex: "",
-      // 多选框表单
-      form: {
-        // 多选框数据结构
-        arrCheckbox: [
-          {
-            label: "模板",
-            type0: [],
-            infoCheckbox: [
-              { label: "美食/餐厅线上活动", name: "type0" },
-              { label: "地推活动", name: "type0" },
-              { label: "线下主题活动", name: "type0" },
-              { label: "单纯品牌曝光", name: "type0" },
-            ],
-          },
-        ],
-        // 单选框数据结构（未完成）
-        arrRadio: [],
-        resource: "",
-      },
-      // 多选框弹出框dialog数据结构
-      dialogAddCheckbox: false,
-      dialogCheckbox: {
-        label: "",
-        name: [],
-      },
+      navBarActive:"1"
     };
+  },
+  components: {
+    baseMod,
   },
   asyncData() {},
   created() {},
-  mounted() {
-    // 生成二维码
-    var qrcode = new QRCode(this.$refs.qrcode, {
-      width: 100,
-      height: 100,
-    });
-    this.qrcode = qrcode;
-    
-    var form = null;
-    
-    if (window.localStorage.getItem("form")) {
-      form = JSON.parse(window.localStorage.getItem("form")).mydata;
-      this.form = form;
-    }    
-    
-  },
+  mounted() {},
   computed: {},
   methods: {
-    onSubmit() {
-      console.log("submit!");
-      var _this = this;
-
-      // 提交表单数据
-      this.$axios({
-        method: "post",
-        url: "/process_post",
-        headers: { "Content-Type": "application/json;charset=utf-8" },
-        data: {
-          mydata: this.form,
-        },
-      })
-        .then(function (response) {
-          // let form=JSON.stringify(_this.form);
-          let form = JSON.stringify(response.data);
-
-          window.localStorage.setItem("form", form);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-      // 生成二维码
-      var makeCode = () => {
-        var elText = "http://www.baidu.com/";
-
-        this.qrcode.makeCode(elText);
-        this.qrcodeConSwi = true;
-      };
-
-      makeCode();
+    // 左侧导航栏
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
     },
-    // 多选框节点添加节点------------------
-    addArrCheckboxBtn(index) {
-      this.dialogAddCheckbox = true;
-      // 当前操作的多选框dom节点选项序号
-      this.checkboxItemIndex = index;
-
-      // 重置清空多选弹出框里的内容
-      this.dialogCheckbox.label = "";
-      this.dialogCheckbox.name = [];
-    },
-
-    // 多选框节点删除节点
-    delArrCheckbox(index) {
-      // 当前操作的多选框dom节点选项序号
-      this.checkboxItemIndex = index;
-      // 删除节点
-      this.form.arrCheckbox.splice(index, 1);
-    },
-
-    // ----------------多选对话框-----------------
-    // 添加多选框
-    addCheckbox() {
-      this.dialogCheckbox.name.push("");
-    },
-    // 删减多选框
-    delCheckbox() {
-      this.dialogCheckbox.name.pop();
-    },
-    // 提交多选框
-    dialogCheckbox_submit() {
-      var index = this.checkboxItemIndex;
-
-      // 这一步复制数据结构
-      let obj = new Object();
-      obj.label = this.dialogCheckbox.label;
-      obj["type"+(index+1)] = [];
-      
-      obj.infoCheckbox = this.dialogCheckbox.name.map((val, myindex) => {
-        let infoObj = new Object();
-        infoObj.label = val;
-        infoObj.name = "type"+(index+1);
-        return infoObj;
-      });
-
-      // 在该节点后添加数据
-      this.form.arrCheckbox.splice(index + 1, 0, obj);
-      // 关闭对话框
-      this.dialogAddCheckbox = false;
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
     },
   },
 };
 </script>
 <style scoped>
-#mypaper {
+#addpaper {
   display: inline-block;
   margin-top: 68px;
   width: 100%;
@@ -274,32 +69,24 @@ export default {
   background-color: #f5f8fa;
 }
 
-#mypaper .addform {
-  margin: 0 auto;
-  width: 580px;
-  box-sizing: border-box;
+#addpaper .navBar {
+  width: 380px;
+  height: 660px;
+  margin-top: 30px;
+  float: right;
 }
 
-.dialogCheckbox {
-  height: 400px;
-  overflow: auto;
-  padding: 20px;
+#addpaper .navBar h2 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 25px;
 }
 
-.dialogCheckboxSwi {
-  margin-top: 10px;
+#addpaper .navBarCon {
+  background: white;
+  height: 100%;
+  width: 100%;
 }
 
-.qrcodeCon {
-  width: 300px;
-  position: absolute;
-  left: 10%;
-  top: 20%;
-}
 
-.qrcode {
-  width: 160px;
-  height: 160px;
-  margin: 10px auto;
-}
 </style>

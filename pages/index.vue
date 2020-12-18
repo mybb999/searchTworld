@@ -50,7 +50,9 @@ export default {
       header_bannerHei: 0,
     };
   },
-  created() {},
+  created() {
+    
+  },  
   mounted() {
     this.header_bannerHeiGet();
   },
@@ -60,10 +62,10 @@ export default {
       this.header_bannerHei = document.documentElement.clientHeight;
     },
     toAddPaper() {
-      // window.location.href='/addpaper';
-      this.$router.push({
-        path: "/addpaper",
-      });
+      window.location.href='/addpaper';
+      // this.$router.push({
+      //   path: "/addpaper",
+      // });
     },
   },
 };
@@ -73,11 +75,9 @@ export default {
 /* 头 */
 #container .warp .header_banner {
   width: 100%;
+  height: 800px;
   background: url("~assets/images/banner1.jpg") no-repeat center;
   background-size: cover;
-}
-
-#container .warp .header_banner {
   color: white;
   font-size: 54px;
 }
